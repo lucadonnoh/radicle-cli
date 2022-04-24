@@ -5,6 +5,8 @@ use walletconnect::{qr, Client, Metadata, Transaction};
 use ethers::types::transaction::eip2718::TypedTransaction;
 use ethers::types::{Address, NameOrAddress, Signature, U256};
 
+use rad_terminal::components as term;
+
 #[derive(Debug)]
 pub struct WalletConnect {
     client: Client,
@@ -77,12 +79,13 @@ impl WalletConnect {
         let tx = Transaction {
             from: *msg.from().unwrap(),
             to,
-            gas_limit: None,
+            gas_limit: msg.gas().copied(),
             gas_price: msg.gas_price(),
             value: *msg.value().unwrap_or(&U256::from(0)),
             data: msg.data().unwrap().to_vec(),
             nonce: msg.nonce().copied(),
         };
+        term::info!("tx2: {:?}", tx);
 
         let raw = self.client.sign_transaction(tx).await?.to_vec();
         assert_eq!(raw[raw.len() - 66], 160);

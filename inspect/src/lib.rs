@@ -5,6 +5,7 @@ use std::sync::Arc;
 use ethers::prelude::{Address, Http, Provider, SignerMiddleware, U256, Middleware};
 use ethers::prelude::builders::ContractCall;
 use ethers::prelude::abigen;
+use ethers::prelude::maybe;
 use ethers::contract::{AbiError, Contract, ContractError};
 use ethers::abi::{Abi, Detokenize, ParamType, SolStruct, AbiEncode};
 use ethers::types::{U128, TransactionRequest, Bytes, Eip1559TransactionRequest};
@@ -292,14 +293,18 @@ async fn give_create(
 
     let mut typed_tx = TypedTransaction::Eip1559(tx);
     client.fill_transaction(&mut typed_tx, None).await?;
+    let gas_price = maybe(typed_tx.gas_price(), client.get_gas_price()).await?;
+    typed_tx.set_gas(200000);
+    typed_tx.set_gas_price(gas_price);
+    term::info!("tx: {:?}", typed_tx);
     let signed_tx = client.sign_transaction(&typed_tx, donnoh_addr.parse::<Address>()?).await?;
     //term::info!("bytes {:?}", Bytes::from(signed_tx.to_vec()));
     //let pending_tx = client.send_raw_transaction(typed_tx.rlp_signed(1 as u64, &signed_tx)).await?;
-    typed_tx.set_gas(100000);
-    typed_tx.set_gas_price(typed_tx.gas_price());
     typed_tx.set_access_list(AccessList::from(vec![]));
+    typed_tx.set_gas_price(gas_price * 2);
     let hex = typed_tx.rlp_signed(1 as u64, &signed_tx);
     term::info!("{}", format!("{:x}", hex));
+    let pending_tx = client.send_raw_transaction(hex).await?;
     //let pending_tx = client.send_raw_transaction(Bytes::from(signed_tx.to_vec())).await?;
     //let pending_tx = client.send_transaction(tx, None).await?;
 
