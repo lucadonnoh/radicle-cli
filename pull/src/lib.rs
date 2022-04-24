@@ -18,7 +18,7 @@ Usage
 
     rad pull [--seed <host>] [<option>...]
 
-    Pulls changes into the current branch.
+    Pulls changes into the current branch. ?????
 
 Options
 

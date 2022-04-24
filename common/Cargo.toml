@@ -51,7 +51,7 @@ version = "0.4.3"
 optional = true
 
 [dependencies.walletconnect]
-git = "https://github.com/xphoniex/walletconnect-rs"
-branch = "v0.1.0"
+git = "https://github.com/smartcontracts/walletconnect-rs"
+branch = "v0.1.5"
 features = ["qr"]
 optional = true

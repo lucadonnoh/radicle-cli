@@ -10,10 +10,10 @@ description = "Inspect a radicle identity or project directory"
 anyhow = "1.0"
 librad = "0"
 lexopt = "0.2"
-lnk-profile = "0"
+ethers = { version = "0.6.2", features = ["abigen-offline"] }
+thiserror = "1.0"
 rad-terminal = { path = "../terminal" }
-rad-common = { path = "../common" }
-link-identities = { version = "0" }
-serde_json = "1.0"
-colored_json = "2.1.0"
-chrono = "0.4"
+rad-common = { path = "../common", features = ["ethereum"] }
+serde_json = "1"
+tokio = "1"
+url = { version = "2" }
